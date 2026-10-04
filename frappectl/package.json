@@ -1,0 +1,62 @@
+{
+	"$schema": "https://www.raycast.com/schemas/extension.json",
+	"name": "frappectl",
+	"title": "Frappectl",
+	"description": "List and add frappectl site profiles",
+	"icon": "extension-icon.png",
+	"author": "rl0007",
+	"categories": ["Developer Tools"],
+	"license": "MIT",
+	"commands": [
+		{
+			"name": "list-profiles",
+			"title": "List Profiles",
+			"description": "Show every stored frappectl profile",
+			"mode": "view"
+		},
+		{
+			"name": "add-site",
+			"title": "Add Site",
+			"description": "Log in to a Frappe site and store it as a frappectl profile",
+			"mode": "view"
+		},
+		{
+			"name": "refresh-api-keys",
+			"title": "Refresh API Keys",
+			"description": "Re-enter the API key and secret for a stored profile",
+			"mode": "view"
+		}
+	],
+	"preferences": [
+		{
+			"name": "terminal",
+			"type": "dropdown",
+			"required": false,
+			"title": "Terminal",
+			"description": "Terminal app that runs the frappectl login",
+			"default": "iTerm",
+			"data": [
+				{ "title": "iTerm", "value": "iTerm" },
+				{ "title": "Terminal", "value": "Terminal" }
+			]
+		}
+	],
+	"dependencies": {
+		"@raycast/api": "^2.6.2",
+		"@raycast/utils": "^2.3.2"
+	},
+	"devDependencies": {
+		"@raycast/eslint-config": "^2.2.0",
+		"@types/node": "22.19.17",
+		"@types/react": "19.0.10",
+		"eslint": "^9.0.0",
+		"prettier": "^3.9.9",
+		"typescript": "~6.0.3"
+	},
+	"scripts": {
+		"build": "ray build",
+		"dev": "ray develop",
+		"fix-lint": "ray lint --fix",
+		"lint": "ray lint"
+	}
+}

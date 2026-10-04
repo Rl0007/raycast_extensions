@@ -1,0 +1,9 @@
+#!/usr/bin/expect -f
+# frappectl has no --api-key flag: answer the method prompt, then hand the terminal back for the credentials.
+set timeout -1
+spawn {*}$argv
+expect {
+	"Authentication method" { send "api-key\r" }
+	eof { exit 1 }
+}
+interact
