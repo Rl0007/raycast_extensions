@@ -36,6 +36,9 @@ for extension in */; do
 	echo "   loaded into Raycast"
 done
 
+# The Devbox extension drives private devboxctl scripts; link them when that repo is cloned alongside.
+[ -x ../devboxctl/install ] && ../devboxctl/install >/dev/null && echo "== devboxctl scripts linked into ~/bin"
+
 command -v frappectl >/dev/null || [ -x "$HOME/.local/bin/frappectl" ] ||
 	echo "Note: frappectl is not installed. Run: uv tool install frappectl"
 [ -x "$HOME/bin/devboxctl" ] || echo "Note: the Devbox extension needs a devboxctl script at ~/bin/devboxctl"

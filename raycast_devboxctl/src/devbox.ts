@@ -28,9 +28,9 @@ export type DevBox = {
 	nickname?: string;
 };
 
-export async function runCommand(file: string, commandArguments: string[]) {
+export async function runCommand(file: string, commandArguments: string[], env?: NodeJS.ProcessEnv) {
 	try {
-		const { stdout } = await execFileAsync(file, commandArguments);
+		const { stdout } = await execFileAsync(file, commandArguments, { env: env ?? process.env });
 		return stdout;
 	} catch (error) {
 		// frappectl prints an authlib deprecation warning on every run; surface its "error:" line instead.
@@ -247,4 +247,30 @@ export async function getDashboardUrl() {
 	const { stdout } = await execFileAsync(FRAPPECTL_PATH, ['--json', 'auth', 'list']);
 	const profiles: { profile: string; site: string }[] = JSON.parse(stdout);
 	return profiles.find((profile) => profile.profile === DEVBOX_PROFILE)?.site;
+}
+
+export type BoxStats = {
+	slug: string;
+	nickname: string | null;
+	title: string | null;
+	owner: string | null;
+	status: string | null;
+	network: string;
+	host_memory_bytes: number;
+	cpu_percent: number;
+	uptime_seconds: number;
+	disk_allocated_bytes: number;
+	guest: {
+		memory_total: number;
+		memory_available: number;
+		root_size: number;
+		root_used: number;
+		load: number;
+	} | null;
+};
+
+// devboxctl shells out to frappectl, which lives in ~/.local/bin.
+export async function getBoxStats(): Promise<BoxStats[]> {
+	const env = { ...process.env, PATH: `${join(homedir(), '.local', 'bin')}:/usr/bin:/bin` };
+	return JSON.parse(await runCommand(DEVBOXCTL_PATH, ['stats', '--json'], env));
 }

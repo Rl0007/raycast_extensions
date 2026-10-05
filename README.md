@@ -90,7 +90,7 @@ Logging in always happens in a real terminal. frappectl refuses to read credenti
 You need macOS, [Raycast](https://www.raycast.com), Node.js 22 or later, and iTerm or Terminal.
 
 1. Install frappectl: `uv tool install frappectl`
-2. For Devbox, put your `devboxctl` script at `~/bin/devboxctl` and add a frappectl profile named `devbox` for the site that tracks your boxes.
+2. For Devbox, clone your private `devboxctl` repo next to this one (`install.sh` links it into `~/bin`) or put the script at `~/bin/devboxctl` and add a frappectl profile named `devbox` for the site that tracks your boxes.
 3. Clone this repo and load every extension into Raycast:
 
 ```bash
