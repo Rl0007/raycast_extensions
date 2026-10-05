@@ -129,6 +129,14 @@ export default function Command() {
 									icon={Icon.Pencil}
 									target={<NicknameForm devBox={devBox} onSaved={revalidate} />}
 								/>
+								{devBox.status === 'active' && (
+									<Action.Push
+										title="Clone…"
+										icon={Icon.CopyClipboard}
+										shortcut={Keyboard.Shortcut.Common.Duplicate}
+										target={<CloneForm devBox={devBox} devBoxes={devBoxes} />}
+									/>
+								)}
 							</ActionPanel.Section>
 							<ActionPanel.Section>
 								{(Object.keys(BOX_ACTIONS) as BoxMethod[])
@@ -158,6 +166,65 @@ export default function Command() {
 				/>
 			))}
 		</List>
+	);
+}
+
+const NEW_BOX = 'new';
+
+function CloneForm({ devBox, devBoxes }: { devBox: DevBox; devBoxes: DevBox[] }) {
+	const { pop } = useNavigation();
+	const targets = devBoxes.filter((target) => target.name !== devBox.name && target.status !== 'creating');
+
+	async function clone({ target }: { target: string }) {
+		const targetBox = targets.find((box) => box.name === target);
+		if (targetBox) {
+			const confirmed = await confirmAlert({
+				title: `Replace ${targetBox.nickname ?? targetBox.name}?`,
+				message: `Everything on it is replaced by a copy of ${devBox.nickname ?? devBox.name}.`,
+				primaryAction: { title: 'Replace', style: Alert.ActionStyle.Destructive },
+			});
+			if (!confirmed) {
+				return;
+			}
+		}
+		try {
+			const terminal = await runInTerminal([
+				DEVBOXCTL_PATH,
+				'clone',
+				devBox.name,
+				...(targetBox ? ['--into', targetBox.name] : []),
+			]);
+			await showHUD(`Cloning in ${terminal}`);
+			pop();
+		} catch (error) {
+			await showFailureToast(error, { title: 'Could not open the terminal' });
+		}
+	}
+
+	return (
+		<Form
+			navigationTitle={`Clone ${devBox.nickname ?? devBox.name}`}
+			actions={
+				<ActionPanel>
+					<Action.SubmitForm title="Clone" icon={Icon.CopyClipboard} onSubmit={clone} />
+				</ActionPanel>
+			}
+		>
+			<Form.Description
+				text={`${devBox.nickname ?? devBox.name} pauses for about a minute while its disks are copied, then carries on.`}
+			/>
+			<Form.Dropdown id="target" title="Copy Into" defaultValue={NEW_BOX}>
+				<Form.Dropdown.Item value={NEW_BOX} title="A new box" icon={Icon.Plus} />
+				{targets.map((target) => (
+					<Form.Dropdown.Item
+						key={target.name}
+						value={target.name}
+						title={`${target.nickname ?? target.name} (${target.status})`}
+						icon={Icon.ComputerChip}
+					/>
+				))}
+			</Form.Dropdown>
+		</Form>
 	);
 }
 
