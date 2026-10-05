@@ -10,12 +10,13 @@
 
 </div>
 
-Two Raycast extensions that put everyday Frappe chores one keystroke away: picking a site profile, logging in to a new site, rotating API keys, and getting into a dev box. Both are thin front ends over command-line tools, so nothing here stores credentials of its own.
+Raycast extensions that put everyday Frappe chores one keystroke away: picking a site profile, logging in to a new site, rotating API keys, and getting into a dev box. Frappectl and Devbox are thin front ends over command-line tools, so nothing here stores credentials of its own. Recent Screenshots is a small extra for sharing what is on your screen.
 
 ### Extensions
 
 - **[Frappectl](raycast_frappectl)**: manage the site profiles of [frappectl](https://github.com/frappe/frappectl), the command-line client for Frappe sites
 - **[Devbox](raycast_devboxctl)**: list, attach to and provision dev boxes through a `devboxctl` script
+- **[Recent Screenshots](raycast_screenshots)**: pick recent screenshots and screen recordings, copy or paste them, or paste their paths into a terminal
 
 ### Screenshots
 
@@ -71,6 +72,14 @@ Devbox:
 - Open a box's site, web editor or web terminal, copy its slug or attach command, and give it a nickname
 - Start, stop and delete a box, each behind a confirmation
 - **Provision Dev Box**: pick a profile and branch, then watch the provisioning run in your terminal
+- **Servers**: see RAM, disk, CPU load, uptime and dev box count for each server, read over SSH
+
+Recent Screenshots:
+
+- **Recent Screenshots**: browse your latest screenshots and screen recordings in a grid, newest first
+- Copy or paste a capture, or select several and copy them in one go
+- Paste Path or Copy Path to drop a capture's file path into a terminal
+- Set how many captures to show and which folder to read, which defaults to where macOS saves screenshots
 
 ### How it works
 
