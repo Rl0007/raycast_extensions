@@ -56,25 +56,24 @@ You need macOS, [Raycast](https://www.raycast.com), Node.js 22 or later, and iTe
 
 1. Install frappectl: `uv tool install frappectl`
 2. For Devbox, put your `devboxctl` script at `~/bin/devboxctl` and add a frappectl profile named `devbox` for the site that tracks your boxes.
-3. Load an extension into Raycast:
+3. Clone this repo and load every extension into Raycast:
 
 ```bash
-git clone https://github.com/Rl0007/raycast_.git
-cd raycast_/frappectl
-npm install
-npm run dev
+git clone https://github.com/Rl0007/raycast_.git ~/raycast_
+~/raycast_/install.sh
 ```
 
-Repeat the last three steps in `devbox`. Raycast keeps the extensions after you stop `npm run dev`. Pick iTerm or Terminal in each extension's preferences.
+Run the same two lines on each Mac to get the same extensions everywhere. To update, run `git -C ~/raycast_ pull && ~/raycast_/install.sh`. Profiles and API keys stay on each Mac. Pick iTerm or Terminal in each extension's preferences.
 
 ### Development
 
 ```bash
+cd frappectl
+npm run dev
 npm run lint
-npm run build
 ```
 
-Run these inside `frappectl` or `devbox`.
+`npm run dev` reloads the extension in Raycast on every save.
 
 ### Support
 
