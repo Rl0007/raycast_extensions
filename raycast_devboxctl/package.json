@@ -19,6 +19,12 @@
 			"title": "Provision Dev Box",
 			"description": "Run devboxctl provision for a profile in a terminal",
 			"mode": "view"
+		},
+		{
+			"name": "servers",
+			"title": "Servers",
+			"description": "See RAM, disk, CPU load and dev box count for each server",
+			"mode": "view"
 		}
 	],
 	"preferences": [

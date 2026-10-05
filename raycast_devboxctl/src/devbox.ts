@@ -128,3 +128,123 @@ export async function runInTerminal(commandArguments: string[]) {
 	`);
 	return terminal;
 }
+
+export type DiskUsage = { mount: string; size: number; used: number };
+
+export type ServerStats = {
+	cores: number;
+	load: string[];
+	memoryTotal: number;
+	memoryAvailable: number;
+	disks: DiskUsage[];
+	uptimeSeconds: number;
+};
+
+export type ServerOverview = {
+	name: string;
+	ip_address: string | null;
+	domain: string | null;
+	status: string;
+	sshTarget: string | null;
+	devBoxes: { total: number; active: number };
+	stats?: ServerStats;
+	error?: string;
+};
+
+const STATS_COMMAND = [
+	'echo "cores $(nproc)"',
+	'echo "load $(cut -d" " -f1-3 /proc/loadavg)"',
+	'free -b | awk \'/^Mem:/ {print "memory", $2, $7}\'',
+	'df -B1 -x tmpfs -x devtmpfs -x overlay -x squashfs -x efivarfs --output=target,size,used | tail -n +2 | sed "s/^/disk /"',
+	'echo "uptime $(cut -d" " -f1 /proc/uptime)"',
+].join('; ');
+
+// ~/.ssh/config decides which key reaches a server, so reuse the alias whose HostName is its IP.
+async function findSshTarget(ipAddress: string) {
+	const config = await readFile(join(homedir(), '.ssh', 'config'), 'utf8').catch(() => '');
+	let aliases: string[] = [];
+	for (const line of config.split('\n')) {
+		const [keyword, ...values] = line.trim().split(/\s+/);
+		if (keyword?.toLowerCase() === 'host') {
+			aliases = values.filter((alias) => !/[*?]/.test(alias));
+		} else if (keyword?.toLowerCase() === 'hostname' && values[0] === ipAddress && aliases.length) {
+			return aliases[0];
+		}
+	}
+	return `root@${ipAddress}`;
+}
+
+function parseServerStats(output: string): ServerStats {
+	const stats: ServerStats = {
+		cores: 0,
+		load: [],
+		memoryTotal: 0,
+		memoryAvailable: 0,
+		disks: [],
+		uptimeSeconds: 0,
+	};
+	for (const line of output.split('\n')) {
+		const [key, ...values] = line.trim().split(/\s+/);
+		if (key === 'cores') {
+			stats.cores = Number(values[0]);
+		} else if (key === 'load') {
+			stats.load = values;
+		} else if (key === 'memory') {
+			stats.memoryTotal = Number(values[0]);
+			stats.memoryAvailable = Number(values[1]);
+		} else if (key === 'disk') {
+			stats.disks.push({ mount: values[0], size: Number(values[1]), used: Number(values[2]) });
+		} else if (key === 'uptime') {
+			stats.uptimeSeconds = Number(values[0]);
+		}
+	}
+	return stats;
+}
+
+async function getServerStats(sshTarget: string) {
+	const { stdout } = await execFileAsync(
+		'/usr/bin/ssh',
+		['-o', 'BatchMode=yes', '-o', 'ConnectTimeout=5', sshTarget, STATS_COMMAND],
+		{ timeout: 15000 },
+	);
+	return parseServerStats(stdout);
+}
+
+export async function getServerOverviews(): Promise<ServerOverview[]> {
+	const [servers, devBoxes]: [
+		{ name: string; ip_address: string | null; domain: string | null; status: string }[],
+		{ status: string; server: string | null }[],
+	] = await Promise.all([
+		runFrappectl(['doc', 'list', 'Server', '--fields', 'name,ip_address,domain,status', '--all']),
+		runFrappectl(['doc', 'list', 'Dev Box', '-f', 'status!=deleted', '--fields', 'status,server', '--all']),
+	]);
+	return Promise.all(
+		servers.map(async (server) => {
+			const boxes = devBoxes.filter((devBox) => devBox.server === server.name);
+			const overview: ServerOverview = {
+				...server,
+				sshTarget: null,
+				devBoxes: {
+					total: boxes.length,
+					active: boxes.filter((devBox) => devBox.status === 'active').length,
+				},
+			};
+			if (!server.ip_address) {
+				return { ...overview, error: 'No IP address on the Server record' };
+			}
+			overview.sshTarget = await findSshTarget(server.ip_address);
+			try {
+				return { ...overview, stats: await getServerStats(overview.sshTarget) };
+			} catch (error) {
+				const stderr = (error as { stderr?: string }).stderr?.trim();
+				return { ...overview, error: stderr || (error as Error).message };
+			}
+		}),
+	);
+}
+
+export async function getDashboardUrl() {
+	const { stdout } = await execFileAsync(FRAPPECTL_PATH, ['--json', 'auth', 'list']);
+	const profiles: { profile: string; site: string }[] = JSON.parse(stdout);
+	return profiles.find((profile) => profile.profile === DEVBOX_PROFILE)?.site;
+}
