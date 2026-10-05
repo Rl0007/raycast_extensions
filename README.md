@@ -1,8 +1,8 @@
 <div align="center" markdown="1">
 
 <p>
-	<img src="frappectl/assets/extension-icon.png" alt="Frappectl extension icon" width="80" />
-	<img src="devbox/assets/extension-icon.png" alt="Devbox extension icon" width="80" />
+	<img src="raycast_frappectl/assets/extension-icon.png" alt="Frappectl extension icon" width="80" />
+	<img src="raycast_devboxctl/assets/extension-icon.png" alt="Devbox extension icon" width="80" />
 </p>
 <h1>Raycast extensions for Frappe developers</h1>
 
@@ -14,8 +14,8 @@ Two Raycast extensions that put everyday Frappe chores one keystroke away: picki
 
 ### Extensions
 
-- **[Frappectl](frappectl)**: manage the site profiles of [frappectl](https://github.com/frappe/frappectl), the command-line client for Frappe sites
-- **[Devbox](devbox)**: list, attach to and provision dev boxes through a `devboxctl` script
+- **[Frappectl](raycast_frappectl)**: manage the site profiles of [frappectl](https://github.com/frappe/frappectl), the command-line client for Frappe sites
+- **[Devbox](raycast_devboxctl)**: list, attach to and provision dev boxes through a `devboxctl` script
 
 ### Features
 
@@ -59,16 +59,16 @@ You need macOS, [Raycast](https://www.raycast.com), Node.js 22 or later, and iTe
 3. Clone this repo and load every extension into Raycast:
 
 ```bash
-git clone https://github.com/Rl0007/raycast_.git ~/raycast_
-~/raycast_/install.sh
+git clone https://github.com/Rl0007/raycast_extensions.git ~/raycast_extensions
+~/raycast_extensions/install.sh
 ```
 
-Run the same two lines on each Mac to get the same extensions everywhere. To update, run `git -C ~/raycast_ pull && ~/raycast_/install.sh`. Profiles and API keys stay on each Mac. Pick iTerm or Terminal in each extension's preferences.
+Run the same two lines on each Mac to get the same extensions everywhere. To update, run `git -C ~/raycast_extensions pull && ~/raycast_extensions/install.sh`. Profiles and API keys stay on each Mac. Pick iTerm or Terminal in each extension's preferences.
 
 ### Development
 
 ```bash
-cd frappectl
+cd raycast_frappectl
 npm run dev
 npm run lint
 ```
@@ -77,7 +77,7 @@ npm run lint
 
 ### Support
 
-Found a bug or have a question? [Open an issue](https://github.com/Rl0007/raycast_/issues).
+Found a bug or have a question? [Open an issue](https://github.com/Rl0007/raycast_extensions/issues).
 
 #### License
 
