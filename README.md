@@ -17,6 +17,45 @@ Two Raycast extensions that put everyday Frappe chores one keystroke away: picki
 - **[Frappectl](raycast_frappectl)**: manage the site profiles of [frappectl](https://github.com/frappe/frappectl), the command-line client for Frappe sites
 - **[Devbox](raycast_devboxctl)**: list, attach to and provision dev boxes through a `devboxctl` script
 
+### Screenshots
+
+Shown with sample data.
+
+**List Profiles**
+
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/list-profiles-dark.webp" />
+	<img src=".github/screenshots/list-profiles-light.webp" alt="List Profiles command" width="720" />
+</picture>
+
+**Add Site**
+
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/add-site-dark.webp" />
+	<img src=".github/screenshots/add-site-light.webp" alt="Add Site command" width="720" />
+</picture>
+
+**Refresh API Keys**
+
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/refresh-api-keys-dark.webp" />
+	<img src=".github/screenshots/refresh-api-keys-light.webp" alt="Refresh API Keys command" width="720" />
+</picture>
+
+**Dev Boxes**
+
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/dev-boxes-dark.webp" />
+	<img src=".github/screenshots/dev-boxes-light.webp" alt="Dev Boxes command" width="720" />
+</picture>
+
+**Provision Dev Box**
+
+<picture>
+	<source media="(prefers-color-scheme: dark)" srcset=".github/screenshots/provision-dev-box-dark.webp" />
+	<img src=".github/screenshots/provision-dev-box-light.webp" alt="Provision Dev Box command" width="720" />
+</picture>
+
 ### Features
 
 Frappectl:
@@ -34,19 +73,6 @@ Devbox:
 - **Provision Dev Box**: pick a profile and branch, then watch the provisioning run in your terminal
 
 ### How it works
-
-```mermaid
-sequenceDiagram
-    participant R as Raycast
-    participant T as Terminal
-    participant S as Frappe site
-
-    R->>T: Open a window with the frappectl command filled in
-    Note over T: You type the API key and secret here
-    T->>S: frappectl checks the credentials
-    S-->>T: Logged-in user
-    T-->>R: Profile saved, the list shows it
-```
 
 Logging in always happens in a real terminal. frappectl refuses to read credentials from a pipe, so they never end up in shell history or logs, and these extensions keep it that way. Everything else (listing, toggling read-only, deleting) runs in the background.
 
